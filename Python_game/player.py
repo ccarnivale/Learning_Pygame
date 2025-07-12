@@ -29,7 +29,7 @@ class Player(pygame.sprite.Sprite):
         
         #my file path is weird as there is an extra sub folder with the same name that VScode omits in the file folder viewer.
         for animation in self.animations.keys():
-            full_path = "C:\\Users\\Chris Carnivale\\OneDrive\\Desktop\\Python_fun_project\\Python_game\\Assets\\Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\Characters\\" + animation 
+            full_path = "C:\\Users\\Chris Carnivale\\OneDrive\\Desktop\\Python_fun_project\\First-Python-Game\\Python_game\\Assets\\Sprout Lands Sprites\\Sprout Lands - Sprites - Basic pack\\Characters\\" + animation 
             self.animations[animation] = import_folder(full_path)   
     
     def animate(self, dt):
