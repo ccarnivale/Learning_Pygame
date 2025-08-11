@@ -12,7 +12,8 @@ class Player(pygame.sprite.Sprite):
         self.status = 'down'
         #create a starting index to use for animation loop
         self.frame_index = 0
-        
+        self.idle = True
+        #load the first image to use for the player sprite
         # general setup
         self.image = self.animations[self.status][self.frame_index]
         #self.image.fill('green')
@@ -25,15 +26,17 @@ class Player(pygame.sprite.Sprite):
 
     #only doing a few movement animations in the dictionary for now to make sure I cut the sprite file correctly
     def import_assets(self):
-        self.animations = {'up': [], 'down':[], 'left': [], 'right': []} #will make larger with more sprites
-        
-        #my file path is weird as there is an extra sub folder with the same name that VScode omits in the file folder viewer.
+        self.animations = {'up': [], 'down':[], 'left': [], 'right': []} 
+        #Fixed the file path issues. Directs to correct folder and uses the import_folder function to get all images in the folder.
         for animation in self.animations.keys():
-            full_path = "C:\\Users\\Chris Carnivale\\OneDrive\\Desktop\\Python_fun_project\\First-Python-Game\\Python_game\\Assets\\Sprout Lands Sprites\\Sprout Lands - Sprites - Basic pack\\Characters\\" + animation 
+            full_path = "Assets\\Sprout Lands Sprites\\Sprout Lands - Sprites - Basic pack\\Characters\\" + animation 
             self.animations[animation] = import_folder(full_path)   
     
     def animate(self, dt):
-        self.frame_index += 4*dt
+        if self.idle == False:
+            self.frame_index += 4*dt
+        else:
+            self.frame_index = 0
         if self.frame_index >= len(self.animations[self.status]):
             self.frame_index = 0
             
@@ -44,23 +47,29 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_UP] or keys[pygame.K_w]:
             self.direction.y = -1
             self.status = 'up'
+            self.idle = False
         else:
             if keys[pygame.K_DOWN] or keys[pygame.K_s]:
                 self.direction.y = 1
                 self.status = 'down'
             else:
                 self.direction.y = 0
+                self.idle = False
     
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.direction.x = -1
             self.status = 'left'
+            self.idle = False
         else:
             if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                 self.direction.x = 1
                 self.status = 'right'
+                self.idle = False
             else:
                 self.direction.x = 0
-    
+        if self.direction.x == 0 and self.direction.y == 0:
+            self.idle = True
+            
     def move(self, dt):
         
         #normalizing movement speed
