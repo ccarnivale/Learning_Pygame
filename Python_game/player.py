@@ -12,7 +12,11 @@ class Player(pygame.sprite.Sprite):
         self.status = 'down'
         #create a starting index to use for animation loop
         self.frame_index = 0
+        
+        #Logic help to determine if the player is idle or not
+        #if the player is idle, we want to use only the first two frames of the animation
         self.idle = True
+        
         #load the first image to use for the player sprite
         # general setup
         self.image = self.animations[self.status][self.frame_index]
@@ -21,7 +25,10 @@ class Player(pygame.sprite.Sprite):
         # Movement attributes instead of functional to be framerate indpendent and use delta time
         self.direction = pygame.math.Vector2()
         self.pos = pygame.math.Vector2(self.rect.center) #this is needed b/c we are using delta time, which returns floats commonly...rects store as int() and not compatible with the dt approach
-        self.speed = 150
+        self.speed = 100
+        
+        #tools section for player
+        self.tool = 'axe'
 
 
     #only doing a few movement animations in the dictionary for now to make sure I cut the sprite file correctly
@@ -35,15 +42,19 @@ class Player(pygame.sprite.Sprite):
     def animate(self, dt):
         if self.idle == False:
             self.frame_index += 4*dt
+            if self.frame_index >= len(self.animations[self.status]):
+                self.frame_index = 0
         else:
-            self.frame_index = 0
-        if self.frame_index >= len(self.animations[self.status]):
-            self.frame_index = 0
+            self.frame_index += 2*dt
+            if self.frame_index >= 2:
+                self.frame_index = 0
             
         self.image = self.animations[self.status][int(self.frame_index)]
                 
     def input(self):
         keys = pygame.key.get_pressed()
+        
+        #direction to determine which way the player is moving
         if keys[pygame.K_UP] or keys[pygame.K_w]:
             self.direction.y = -1
             self.status = 'up'
@@ -52,9 +63,10 @@ class Player(pygame.sprite.Sprite):
             if keys[pygame.K_DOWN] or keys[pygame.K_s]:
                 self.direction.y = 1
                 self.status = 'down'
+                self.idle = False
             else:
                 self.direction.y = 0
-                self.idle = False
+                
     
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.direction.x = -1
@@ -67,9 +79,20 @@ class Player(pygame.sprite.Sprite):
                 self.idle = False
             else:
                 self.direction.x = 0
-        if self.direction.x == 0 and self.direction.y == 0:
+        if self.direction.magnitude() == 0:
             self.idle = True
-            
+        
+        #tool use
+        if keys[pygame.K_e]:
+            print("Using tool")
+    
+    def get_status(self):
+        pass
+        #tool use
+        #if something:
+        #    self.status = self.status.split('_')[0] + '_axe'
+        
+    
     def move(self, dt):
         
         #normalizing movement speed
