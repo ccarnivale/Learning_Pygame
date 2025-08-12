@@ -1,6 +1,7 @@
 import pygame
 from settings import *
 from support import *
+from os.path import join
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, group):
@@ -36,8 +37,13 @@ class Player(pygame.sprite.Sprite):
         self.animations = {'up': [], 'down':[], 'left': [], 'right': []} 
         #Fixed the file path issues. Directs to correct folder and uses the import_folder function to get all images in the folder.
         for animation in self.animations.keys():
-            full_path = "Assets\\Sprout Lands Sprites\\Sprout Lands - Sprites - Basic pack\\Characters\\" + animation 
-            self.animations[animation] = import_folder(full_path)   
+            full_path = join('Assets','Sprout Lands Sprites','Sprout Lands - Sprites - Basic pack','Characters') + animation 
+            self.animations[animation] = import_folder(full_path)
+    
+    #def import_tool_assets(self):
+    #    self.tool_animations = {'axe': [], 'hoe': [], 'water': []}
+    #    full_path = "Assets\\Sprout Lands Sprites\\Sprout Lands - Sprites - Basic pack\\Tools\\Axe"
+    #    self.tool_animations['axe'] = import_folder(full_path)  
     
     def animate(self, dt):
         if self.idle == False:
