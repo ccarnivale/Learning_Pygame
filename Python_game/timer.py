@@ -1,12 +1,18 @@
 import pygame
 
 class Timer:
-    def __init__(self):
-        self.start_ticks = pygame.time.get_ticks()  # Get the initial ticks when the timer starts
-
-    def get_time(self):
-        seconds = (pygame.time.get_ticks() - self.start_ticks) / 1000  # Calculate elapsed time in seconds
+    def __init__(self, duration, func):
+        self.duration = duration
+        self.func = func
+        self.active = False
+        self.start_ticks = 0
+        
+        
+    def activate(self):
+        self.active = True
+        self.start_ticks = pygame.time.get_ticks()
+        seconds = (pygame.time.get_ticks() - self.start_ticks) # Calculate elapsed time in seconds
         return seconds
 
-    def reset(self):
-        self.start_ticks = pygame.time.get_ticks()  # Reset the timer to the current ticks
+    def deactivate(self):
+        self.active = False  # Reset the timer to turn off
