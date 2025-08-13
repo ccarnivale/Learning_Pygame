@@ -10,4 +10,6 @@ from os.path import join
 print(os.getcwd())
 path = os.getcwd()
 print('test')
-print(path + os.path.join('Python_game','Assets','Sprout Lands Sprites','Sprout Lands - Sprites - Basic pack','Characters','down'))
+animations = {'up': [], 'down':[], 'left': [], 'right': []}
+print(list(animations.keys())[1])
+print(os.path.join('Python_game','Assets','Sprout Lands Sprites','Sprout Lands - Sprites - Basic pack','Characters', list(animations.keys())[1]))
