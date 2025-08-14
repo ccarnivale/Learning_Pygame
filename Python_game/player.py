@@ -42,10 +42,13 @@ class Player(pygame.sprite.Sprite):
             full_path = join('Python_game','Assets','Sprout Lands Sprites','Sprout Lands - Sprites - Basic pack','Characters', animation)
             self.animations[animation] = import_folder(full_path)
     
-    #def import_tool_assets(self):
-    #    self.tool_animations = {'axe': [], 'hoe': [], 'water': []}
-    #    full_path = "Assets\\Sprout Lands Sprites\\Sprout Lands - Sprites - Basic pack\\Tools\\Axe"
-    #    self.tool_animations['axe'] = import_folder(full_path)  
+    def import_tool_assets(self):
+        self.tool_animations = {'axe': [], 'hoe': [], 'water': []}
+        for animation in self.tool_animations.keys():
+            # Fixed the file path issues. Directs to correct folder and uses the import_folder function to get all images in the folder.
+            # Adjusted to use os.path.join for cross platform compatibility
+            full_path = join('Python_game','Assets','Sprout Lands Sprites','Sprout Lands - Sprites - Basic pack','Characters', animation)
+            self.tool_animations[animation] = import_folder(full_path)  
     
     def animate(self, dt):
         if self.idle == False:
