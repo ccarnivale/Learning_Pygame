@@ -10,6 +10,8 @@ class Player(pygame.sprite.Sprite):
         
         #has to be first b/c when you make image (next step) you need the animations dictionary to pull from.
         self.import_assets()
+        #Import the tool assets for the player
+        #self.import_tool_assets()
         #create status states to determine which animation to use
         self.status = 'down'
         #create a starting index to use for animation loop
@@ -21,7 +23,9 @@ class Player(pygame.sprite.Sprite):
         
         #load the first image to use for the player sprite
         # general setup
-        self.image = self.animations[self.status][self.frame_index]
+        #Conditional images based on if there is a tool being used or not
+        #Will add seed use later
+        self.image = self.animations[self.status][self.frame_index] if not self.tool_status else self.tool_animations[self.status][self.frame_index]
         #self.image.fill('green')
         self.rect = self.image.get_rect(center = pos)
         # Movement attributes instead of functional to be framerate indpendent and use delta time
@@ -30,6 +34,9 @@ class Player(pygame.sprite.Sprite):
         self.speed = 100
         
         #tools section for player
+        #self.tool_animations = {'axe': [], 'hoe': [], 'water': []}
+        #Setting the tool status to false so that the player is not using a tool at the start of the game.
+        self.tool_status = False
         self.tool = 'axe'
 
 
@@ -48,7 +55,7 @@ class Player(pygame.sprite.Sprite):
             # Fixed the file path issues. Directs to correct folder and uses the import_folder function to get all images in the folder.
             # Adjusted to use os.path.join for cross platform compatibility
             full_path = join('Python_game','Assets','Sprout Lands Sprites','Sprout Lands - Sprites - Basic pack','Characters', animation)
-            self.tool_animations[animation] = import_folder(full_path)  
+            self.tool_animations[animation] = import_sprite_sheet(full_path)  
     
     def animate(self, dt):
         if self.idle == False:
