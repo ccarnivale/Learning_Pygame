@@ -14,6 +14,8 @@ class Player(pygame.sprite.Sprite):
         #self.import_tool_assets()
         #create status states to determine which animation to use
         self.status = 'down'
+        #Setting the tool status to false so that the player is not using a tool at the start of the game.
+        self.tool_status = False
         #create a starting index to use for animation loop
         self.frame_index = 0
         
@@ -35,8 +37,6 @@ class Player(pygame.sprite.Sprite):
         
         #tools section for player
         #self.tool_animations = {'axe': [], 'hoe': [], 'water': []}
-        #Setting the tool status to false so that the player is not using a tool at the start of the game.
-        self.tool_status = False
         self.tool = 'axe'
 
 
