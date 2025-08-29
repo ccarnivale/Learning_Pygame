@@ -2,6 +2,12 @@ from os import walk
 from os.path import join
 import pygame
 
+def import_image(*path, alpha = True, format='.png'):
+    full_path = join(*path) + f'{format}'
+    image_surf = pygame.image.load(full_path).convert_alpha() if alpha else pygame.image.load(full_path).convert()
+    return image_surf
+
+
 def import_folder(*path, alpha = True, format='.png'):
     surface_list = []
     
@@ -14,17 +20,17 @@ def import_folder(*path, alpha = True, format='.png'):
     
     return surface_list
 
-def import_sprite_sheet(*path, cols, rows):
+def import_sprite_sheet(*path, cols, rows, alpha = True, format='.png'):
     full_path = join(*path) + f'{format}'
     sprites = {status: [] for status in ['up', 'down', 'left', 'right']}
     
     for col in range(cols):
         for row in range(rows):
-            sprite_sheet = import_folder(full_path, alpha=True)
+            sprite_sheet = import_image(full_path, alpha=alpha, format=format)
             col_width = sprite_sheet.get_width() // cols
             row_height = sprite_sheet.get_height() // rows
-            rect = pygame.Rect(col * col_width, row * row_height, col_width, row_height)
             image = pygame.Surface(rect.size, pygame.SRCALPHA)
+            rect = pygame.Rect(col * col_width, row * row_height, col_width, row_height)
 
             #sprite_sheet = pygame.image.load(full_path).convert_alpha()
 
