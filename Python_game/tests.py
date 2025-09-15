@@ -13,3 +13,10 @@ print('test')
 animations = {'up': [], 'down':[], 'left': [], 'right': []}
 print(list(animations.keys())[1])
 print(os.path.join('Python_game','Assets','Sprout Lands Sprites','Sprout Lands - Sprites - Basic pack','Characters', list(animations.keys())[1]))
+
+direction = ['down', 'up', 'left', 'right']
+tools = ['hoe','axe','water']
+
+for d in direction:
+    print(f'{d}_{tools}')
+    #print(f'{d}_{tools}')

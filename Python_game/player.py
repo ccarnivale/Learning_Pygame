@@ -3,15 +3,25 @@ from settings import *
 from support import *
 import os
 from os.path import join
+from itertools import product
+from timer import Timer
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, group):
         super().__init__(group)
         
         #has to be first b/c when you make image (next step) you need the animations dictionary to pull from.
-        self.import_assets()
+        #create a dictionary to hold all of the player animations
+        self.animations = {'up': [], 'down':[], 'left': [], 'right': []} 
+        self.tool_animations = {'hoe': [], 'axe': [], 'water': []}
+        # Create new list comprehension to generate animation names
+        # this is to create a list of all the tool animation names for use in the sprite sheet import function. This is what is used in import_tool_assets()
+        self.animation_names = [f'{animation}_{tool}'for tool, animation in product(self.tool_animations.keys(), self.animations.keys())]
+        
         #Import the tool assets for the player
-        #self.import_tool_assets()
+        self.import_assets()
+        
+        self.import_tool_assets('Basic Charakter Actions')
         #create status states to determine which animation to use
         self.status = 'down'
         #Setting the tool status to false so that the player is not using a tool at the start of the game.
@@ -27,7 +37,7 @@ class Player(pygame.sprite.Sprite):
         # general setup
         #Conditional images based on if there is a tool being used or not
         #Will add seed use later
-        self.image = self.animations[self.status][self.frame_index] if not self.tool_status else self.tool_animations[self.status][self.frame_index]
+        self.image = self.animations[self.status][self.frame_index] #if not self.tool_status else self.tool_animations[self.status][self.frame_index]
         #self.image.fill('green')
         self.rect = self.image.get_rect(center = pos)
         # Movement attributes instead of functional to be framerate indpendent and use delta time
@@ -39,23 +49,23 @@ class Player(pygame.sprite.Sprite):
         #self.tool_animations = {'axe': [], 'hoe': [], 'water': []}
         self.tool = 'axe'
 
-
+        
+        #Timers for all player actions
+        self.timers = {'tool use': Timer(350, self.use_tool)}
+        
+        print(self.get_status())
     #only doing a few movement animations in the dictionary for now to make sure I cut the sprite file correctly
     def import_assets(self):
-        self.animations = {'up': [], 'down':[], 'left': [], 'right': []} 
         #Fixed the file path issues. Directs to correct folder and uses the import_folder function to get all images in the folder.
         #Adjusted to use os.path.join for cross platform compatibility
         for animation in self.animations.keys():
-            full_path = join('Python_game','Assets','Sprout Lands Sprites','Sprout Lands - Sprites - Basic pack','Characters', animation)
+            full_path = join('Assets','Sprout Lands Sprites','Sprout Lands - Sprites - Basic pack','Characters', animation)
             self.animations[animation] = import_folder(full_path)
     
-    def import_tool_assets(self):
-        self.tool_animations = {'axe': [], 'hoe': [], 'water': []}
-        for animation in self.tool_animations.keys():
-            # Fixed the file path issues. Directs to correct folder and uses the import_folder function to get all images in the folder.
-            # Adjusted to use os.path.join for cross platform compatibility
-            full_path = join('Python_game','Assets','Sprout Lands Sprites','Sprout Lands - Sprites - Basic pack','Characters', animation)
-            self.tool_animations[animation] = import_sprite_sheet(full_path)  
+    def import_tool_assets(self, filename: str, format: str = '.png'): 
+        full_path = join('Assets','Sprout Lands Sprites','Sprout Lands - Sprites - Basic pack','Characters', f'{filename}{format}')
+        self.tool_animations = import_sprite_sheet(full_path,cols= 2,rows=12, names= self.animation_names, alpha=True)  
+        print(self.tool_animations)
     
     def animate(self, dt):
         if self.idle == False:
@@ -102,14 +112,20 @@ class Player(pygame.sprite.Sprite):
         
         #tool use
         if keys[pygame.K_e]:
-            print("Using tool")
+            self.timers['tool use'].activate()
+            
     
     def get_status(self):
-        pass
+        if self.timers['tool use'].active:
+            self.tool_status = True
+            print("Tool being used")
         #tool use
         #if something:
         #    self.status = self.status.split('_')[0] + '_axe'
-        
+    
+    def use_tool(self):
+        print("Tool used")
+        print(f'{self.status}_{self.tool}')    
     
     def move(self, dt):
         
@@ -147,3 +163,4 @@ class Player(pygame.sprite.Sprite):
         self.input()
         self.move(dt)
         self.animate(dt)
+        

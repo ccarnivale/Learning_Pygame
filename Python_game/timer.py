@@ -5,14 +5,21 @@ class Timer:
         self.duration = duration
         self.func = func
         self.active = False
-        self.start_ticks = 0
+        self.start_time = 0
         
         
     def activate(self):
         self.active = True
-        self.start_ticks = pygame.time.get_ticks()
-        seconds = (pygame.time.get_ticks() - self.start_ticks) # Calculate elapsed time in seconds
-        return seconds
+        self.start_time = pygame.time.get_ticks()
 
     def deactivate(self):
-        self.active = False  # Reset the timer to turn off
+        self.active = False
+        self.start_time = 0
+    
+    def update(self):
+        current_time = pygame.time.get_ticks()
+        if self.active and (current_time - self.start_time) >= self.duration:
+            self.deactivate()
+            if self.func:
+                self.func()
+            print("Timer deactivated")
