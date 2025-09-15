@@ -33,7 +33,7 @@ def import_tilemap(*path, cols, rows, alpha = True):
             rect = pygame.Rect(col * tile_width, row * tile_height, tile_width, tile_height)
             image_surf = pygame.Surface(rect.size, pygame.SRCALPHA)
             image_surf.blit(tilemap, (0, 0), rect)
-            tiles[(i, j)] = image_surf
+            tiles[(row, col)] = image_surf
     
     return tiles
 

@@ -22,4 +22,4 @@ class Timer:
             self.deactivate()
             if self.func:
                 self.func()
-            print("Timer deactivated")
+            print(f'{self.active}')

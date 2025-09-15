@@ -46,14 +46,15 @@ class Player(pygame.sprite.Sprite):
         self.speed = 100
         
         #tools section for player
-        #self.tool_animations = {'axe': [], 'hoe': [], 'water': []}
-        self.tool = 'axe'
+        #default tool is hoe...will add ability to change tools later
+        self.tool_index = 0
+        self.tool = ['hoe', 'axe', 'water'][self.tool_index]   
 
         
         #Timers for all player actions
-        self.timers = {'tool use': Timer(350, self.use_tool)}
+        self.timers = {'tool use': Timer(duration=350, func=self.use_tool)}
         
-        print(self.get_status())
+        
     #only doing a few movement animations in the dictionary for now to make sure I cut the sprite file correctly
     def import_assets(self):
         #Fixed the file path issues. Directs to correct folder and uses the import_folder function to get all images in the folder.
@@ -83,45 +84,54 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
         
         #direction to determine which way the player is moving
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
-            self.direction.y = -1
-            self.status = 'up'
-            self.idle = False
-        else:
-            if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-                self.direction.y = 1
-                self.status = 'down'
+        if not self.tool_status:
+            if keys[pygame.K_UP] or keys[pygame.K_w]:
+                self.direction.y = -1
+                self.status = 'up'
                 self.idle = False
             else:
-                self.direction.y = 0
-                
-    
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            self.direction.x = -1
-            self.status = 'left'
-            self.idle = False
-        else:
-            if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-                self.direction.x = 1
-                self.status = 'right'
+                if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+                    self.direction.y = 1
+                    self.status = 'down'
+                    self.idle = False
+                else:
+                    self.direction.y = 0
+                    
+        
+            if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+                self.direction.x = -1
+                self.status = 'left'
                 self.idle = False
             else:
-                self.direction.x = 0
-        if self.direction.magnitude() == 0:
-            self.idle = True
+                if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+                    self.direction.x = 1
+                    self.status = 'right'
+                    self.idle = False
+                else:
+                    self.direction.x = 0
+            if self.direction.magnitude() == 0:
+                self.idle = True
         
         #tool use
         if keys[pygame.K_e]:
             self.timers['tool use'].activate()
+            self.direction = pygame.math.Vector2() #stops movement when using tool
+            print("Tool timer activated")
             
     
     def get_status(self):
         if self.timers['tool use'].active:
             self.tool_status = True
-            print("Tool being used")
+        else:
+            self.tool_status = False
+            #print("Tool being used")
         #tool use
         #if something:
         #    self.status = self.status.split('_')[0] + '_axe'
+    
+    def timers_update(self):
+        for timer in self.timers.values():
+            timer.update()
     
     def use_tool(self):
         print("Tool used")
@@ -161,6 +171,9 @@ class Player(pygame.sprite.Sprite):
 #dt is delta time and important for any updating steps so they are all updated on the same timescale       
     def update(self, dt):
         self.input()
+        self.get_status()
+        self.timers_update()
         self.move(dt)
         self.animate(dt)
+        
         
