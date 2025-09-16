@@ -3,6 +3,9 @@ from player import Player
 from settings import *
 from level import Level 
 
+#os.getcwd()  #get current working directory
+#Working_Directory MUST be in Python_Game
+
 #initiates pygame for playing the sounds produce images
 #pygame.init()
 
