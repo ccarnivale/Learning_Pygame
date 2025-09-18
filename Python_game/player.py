@@ -48,11 +48,13 @@ class Player(pygame.sprite.Sprite):
         #tools section for player
         #default tool is hoe...will add ability to change tools later
         self.tool_index = 0
-        self.tool = ['hoe', 'axe', 'water'][self.tool_index]   
+        self.tools = ['hoe', 'axe', 'water']  
+        self.tool = ['hoe', 'axe', 'water'][self.tool_index]
 
         
         #Timers for all player actions
-        self.timers = {'tool use': Timer(duration=500, func=self.use_tool)}
+        self.timers = {'tool use': Timer(duration=1000, func = None),
+                       'tool switch': Timer(duration=200, func=None)}
         
         
     #only doing a few movement animations in the dictionary for now to make sure I cut the sprite file correctly
@@ -74,9 +76,10 @@ class Player(pygame.sprite.Sprite):
             if self.frame_index >= len(self.animations[self.status]):
                 self.frame_index = 0
         if self.tool_status:
-            self.frame_index += 1*dt
+            self.frame_index += 2*dt
             if self.frame_index >= len(self.tool_animations[f'{self.status}_{self.tool}']):
                 self.frame_index = 0
+                #print(len(self.tool_animations[f'{self.status}_{self.tool}']))
         else:
             self.frame_index += 2*dt
             if self.frame_index >= 2:
@@ -122,15 +125,22 @@ class Player(pygame.sprite.Sprite):
         #tool use
             if keys[pygame.K_e] and not self.timers['tool use'].active:
                 self.timers['tool use'].activate()
+                self.tool_status = True
                 self.direction = pygame.math.Vector2() #stops movement when using tool
-                print("Tool timer activated")
+                print(f'timer.active:{self.timers['tool use'].active}')
+                print(f'Tool status: {self.tool_status}')
+                    #print("Tool timer not active")
+                    #print(f'Tool status: {self.tool_status}')
             
         #tool switching
-            if keys[pygame.K_q] and not self.tool_status:
+            if keys[pygame.K_q] and not self.timers['tool switch'].active:
+                self.timers['tool switch'].activate()
                 self.tool_index += 1
-                if self.tool_index >= len(self.tool):
+                if self.tool_index >= len(self.tools):
                     self.tool_index = 0
+                self.tool = ['hoe', 'axe', 'water'][self.tool_index]
                 print(f'Tool index: {self.tool_index}')
+                print(f'self.tool: {self.tool}')
                     
     def get_status(self):
         if self.timers['tool use'].active:
@@ -184,9 +194,10 @@ class Player(pygame.sprite.Sprite):
 
 #dt is delta time and important for any updating steps so they are all updated on the same timescale       
     def update(self, dt):
+        # update timers first so input sees the current active state
+        self.timers_update()
         self.input()
         self.get_status()
-        self.timers_update()
         self.move(dt)
         self.animate(dt)
         
