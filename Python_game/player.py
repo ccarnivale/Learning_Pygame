@@ -39,7 +39,7 @@ class Player(pygame.sprite.Sprite):
         #Will add seed use later
         self.image = self.animations[self.status][self.frame_index] #if not self.tool_status else self.tool_animations[self.status][self.frame_index]
         #self.image.fill('green')
-        self.rect = self.image.get_rect(center = pos)
+        self.rect = self.image.get_frect(center = pos)
         # Movement attributes instead of functional to be framerate indpendent and use delta time
         self.direction = pygame.math.Vector2()
         self.pos = pygame.math.Vector2(self.rect.center) #this is needed b/c we are using delta time, which returns floats commonly...rects store as int() and not compatible with the dt approach
@@ -68,7 +68,7 @@ class Player(pygame.sprite.Sprite):
     def import_tool_assets(self, filename: str, format: str = '.png'): 
         full_path = os.path.join('Assets','Sprout Lands Sprites','Sprout Lands - Sprites - Basic pack','Characters', f'{filename}{format}')
         self.tool_animations = import_sprite_sheet(full_path,cols= 2,rows=12, names= self.animation_names, alpha=True)  
-        print(self.tool_animations)
+        #print(self.tool_animations)
     
     def animate(self, dt):
         if self.idle == False:
@@ -87,6 +87,7 @@ class Player(pygame.sprite.Sprite):
         
         if self.tool_status:
             self.image = self.tool_animations[f'{self.status}_{self.tool}'][int(self.frame_index)]
+            self.rect = self.image.get_frect(center = (self.pos.x - 15, self.pos.y - 10))
         else:    
             self.image = self.animations[self.status][int(self.frame_index)]
                 
@@ -127,8 +128,8 @@ class Player(pygame.sprite.Sprite):
                 self.timers['tool use'].activate()
                 self.tool_status = True
                 self.direction = pygame.math.Vector2() #stops movement when using tool
-                print(f'timer.active:{self.timers['tool use'].active}')
-                print(f'Tool status: {self.tool_status}')
+                #print(f'timer.active:{self.timers['tool use'].active}')
+                #print(f'Tool status: {self.tool_status}')
                     #print("Tool timer not active")
                     #print(f'Tool status: {self.tool_status}')
             
@@ -139,8 +140,8 @@ class Player(pygame.sprite.Sprite):
                 if self.tool_index >= len(self.tools):
                     self.tool_index = 0
                 self.tool = ['hoe', 'axe', 'water'][self.tool_index]
-                print(f'Tool index: {self.tool_index}')
-                print(f'self.tool: {self.tool}')
+                #print(f'Tool index: {self.tool_index}')
+                #print(f'self.tool: {self.tool}')
                     
     def get_status(self):
         if self.timers['tool use'].active:
@@ -157,8 +158,9 @@ class Player(pygame.sprite.Sprite):
             timer.update()
     
     def use_tool(self):
-        print("Tool used")
-        print(f'{self.status}_{self.tool}')   
+        pass
+        #print("Tool used")
+        #print(f'{self.status}_{self.tool}')   
         #print(self.tool_status) 
     
     def move(self, dt):
